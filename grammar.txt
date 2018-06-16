@@ -49,7 +49,7 @@ NOT:not
 LENGTH:#                
 
 IDENTIFIER:             /^(([a-z]|[A-Z]|_)+\w*)/
-NUMBER:                 /^((\d+\.?)|(\.\d+)(^\d+(\.\d+)))((e|E)(\+?|-)\d+)?/
+NUMBER:                 /^((\d+(\.\d+))|(\d+\.?)|(\.\d+))((e|E)(\+?|-)\d+)?/
 STRING:                 /^("|')((\\")|(\\')|[^"'])*\1/
 
 chunk ::= statList statTail
