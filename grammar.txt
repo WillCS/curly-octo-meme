@@ -1,0 +1,241 @@
+Keywords:
+DO:do
+END:end
+WHILE:while
+REPEAT:repeat
+UNTIL:until
+IF:if
+THEN:then
+ELSEIF:elseif
+ELSE:else
+FOR:for
+ASSIGN:=
+COMMA:,
+IN:in
+FUNCTION:function
+LOCAL:local
+RETURN:return
+BREAK:break
+DOT:.
+COLON::
+LBRACKET:[
+RBRACKET:]
+NIL:nil
+FALSE:false
+TRUE:true
+VARARG:...
+LPAREN:(
+RPAREN:)
+LBRACE:{
+RBRACE:}
+SEMICOLON:;
+PLUS:+
+MINUS:-
+MULTIPLY:*
+DIVIDE:/
+EXPONENT:^
+MODULUS:%
+CONCAT:..
+LESS:<
+LESSEQ:<=
+GREATER:>
+GREATEREQ:>=
+EQUALS:==
+NEQUALS:~=
+AND:and
+OR:or
+NOT:not
+LENGTH:#
+
+chunk ::= statList statTail
+
+block ::= chunk
+
+stat ::=  
+        assignStat |
+        functioncall | 
+        doStat | 
+        whileStat | 
+        repeatStat | 
+        ifStat | 
+        forStat | 
+        forEachStat | 
+        funcStat | 
+        localFuncStat | 
+        localVarStat 
+
+assignStat ::=
+        varlist ASSIGN expList
+
+doStat ::=
+        DO block END
+
+whileStat ::=
+        WHILE exp DO block END
+
+repeatStat ::=
+        REPEAT block UNTIL exp
+
+ifStat ::=
+        IF exp THEN block elseIfBlock elseBlock END
+
+elseIfBlock ::=
+        elseIfBlock ELSEIF exp THEN block |
+        NONE
+
+elseBlock ::=
+        ELSE block |
+        NONE
+
+forStat ::=
+        FOR Identifier ASSIGN exp COMMA exp forStepExp DO block END
+
+forStepExp ::=
+        COMMA exp |
+        NONE
+
+forEachStat ::=
+        FOR IdentifierList IN expList DO block END
+
+funcStat ::=
+        FUNCTION funcIdentifier funcbody
+
+localFuncStat ::=
+        LOCAL FUNCTION Identifier funcbody
+
+localVarStat ::=
+        LOCAL IdentifierList localVarAssignment
+
+localVarAssignment ::=
+        ASSIGN expList |
+        NONE
+
+statList ::= 
+        statList nullableSemicolon stat |
+        stat |
+        NONE
+
+statTail ::= 
+        lastStat nullableSemicolon |
+        NONE
+
+nullableSemicolon ::= 
+        SEMICOLON | 
+        NONE
+
+lastStat ::= 
+        RETURN nullableExpList | 
+        BREAK
+
+funcIdentifier ::= 
+        Identifier fieldAccessor methodAccessor
+
+fieldAccessor ::=
+        fieldAccessor DOT Identifier |
+        NONE
+
+methodAccessor ::=
+        COLON Identifier |
+        NONE
+
+varlist ::= 
+        varlist COMMA var |
+        var
+
+var ::=  
+        Identifier | 
+        prefixExp LBRACKET exp RBRACKET | 
+        prefixExp DOT Identifier 
+
+IdentifierList ::= 
+        IdentifierList COMMA Identifier |
+        Identifier
+
+expList ::= 
+        exp COMMA expList |
+        exp
+
+nullableExpList ::=
+        expList |
+        NONE
+
+exp ::=  
+        NIL | 
+        FALSE | 
+        TRUE | 
+        Number | 
+        String | 
+        VARARG | 
+        function | 
+        prefixExp | 
+        tableConstructor | 
+        exp binop exp | 
+        unop exp 
+
+prefixExp ::= 
+        var | 
+        functioncall | 
+        LBRACKET exp RBRACKET
+
+functioncall ::= 
+        prefixExp args | 
+        prefixExp COLON Identifier args 
+
+args ::= 
+        LBRACKET nullableExpList RBRACKET | 
+        tableConstructor | 
+        String 
+
+function ::= 
+        function funcbody
+
+funcbody ::= 
+        LBRACKET nullableParList RBRACKET block end
+
+parlist ::= 
+        IdentifierList varArgParam | 
+        VARARG
+
+varArgParam ::=
+        COMMA VARARG |
+        NONE
+
+nullableParList ::=
+        parlist |
+        NONE
+
+tableConstructor ::= 
+        LBRACE nullablefieldList RBRACE
+
+fieldList ::= 
+        field fieldEntries nullableFieldSep
+
+fieldEntries ::=
+        fieldEntries fieldSep field |
+        fieldSep field
+
+nullablefieldList ::= 
+        fieldList |
+        NONE
+
+field ::= 
+        LBRACKET exp RBRACKET ASSIGN exp | 
+        Identifier ASSIGN exp | 
+        exp
+
+fieldSep ::= 
+        COMMA | 
+        SEMICOLON
+
+nullableFieldSep ::=
+        fieldSep |
+        NONE
+
+binop ::= PLUS | MINUS | MULTIPLY | DIVIDE | EXPONENT | MODULUS | CONCAT | 
+        LESS | LESSEQ | GREATER | GREATEREQ | EQUALS | NEQUALS | 
+        AND | OR
+
+unop ::= 
+        MINUS | 
+        NOT | 
+        LENGTH
