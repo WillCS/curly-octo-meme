@@ -1,8 +1,10 @@
 #include "token.h"
 
-Token::Token(TokenType token, Location location) {
+using namespace curly_octo_meme;
+
+Token::Token(TokenType token, Location location) 
+    :location(location) {
     this->token = token;
-    this->location = location;
 }
 
 TokenType Token::getType() {
