@@ -3,8 +3,11 @@ LANG_DIR = src/lua
 COMPILER_ARGS = -pedantic -Wall -std=gnu++17 -I/$(SRC_DIR)
 OUTPUT_DIR = bin
 
-build: main.o queue.o lexer.o location.o token.o
-	g++ -o $(OUTPUT_DIR)/main $(OUTPUT_DIR)/main.o $(OUTPUT_DIR)/queue.o $(OUTPUT_DIR)/location.o $(OUTPUT_DIR)/token.o $(OUTPUT_DIR)/lexer.o
+build: main.o queue.o lexer.o location.o token.o language.o
+	g++ -o $(OUTPUT_DIR)/main $(OUTPUT_DIR)/main.o $(OUTPUT_DIR)/queue.o $(OUTPUT_DIR)/location.o $(OUTPUT_DIR)/token.o $(OUTPUT_DIR)/lexer.o $(OUTPUT_DIR)/language.o
+
+language.o: $(SRC_DIR)/language.cpp
+	g++ -o $(OUTPUT_DIR)/language.o -c $(SRC_DIR)/language.cpp $(COMPILER_ARGS)
 
 lexer.o: $(SRC_DIR)/lexer.cpp
 	g++ -o $(OUTPUT_DIR)/lexer.o -c $(SRC_DIR)/lexer.cpp $(COMPILER_ARGS)

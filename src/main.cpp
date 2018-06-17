@@ -1,7 +1,16 @@
-#include <iostream>
+#include "lexer.h"
+#include "language.h"
 
-using namespace std;
+using namespace curly_octo_meme;
 
 int main(int argc, char** argv) {
+    Lexer* lexer = constructLexer();
+
+    lexer->openFile(argv[1]);
+    while(!lexer->isEOF()) {
+        cout << lexer->getToken() << '\n';
+    }
+
+    delete lexer;
     return 0;
 }

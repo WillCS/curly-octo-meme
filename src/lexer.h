@@ -5,39 +5,72 @@
 #include <list>
 #include <fstream>
 #include <iostream>
+#include <regex>
+
+namespace curly_octo_meme {
+    struct LexerEntry;
+    class Lexer;
+}
 
 #include "language.h"
+#include "location.h"
 
 using std::string;
 using std::list;
 using std::ifstream;
+using std::cout;   
+using std::regex;
+using std::streampos;
 
 namespace curly_octo_meme {
     struct LexerEntry {
         public:
-            LexerEntry(TokenType token, string regex);
+            LexerEntry(TokenType token, regex matcher);
             virtual TokenType getToken();
-            virtual string getRegex();
+            virtual regex getRegex();
+            virtual bool match(Lexer* lexer, string* match);
         private:
             TokenType token;
-            string regex;
+            regex matcher;
+    };
+
+    struct MultilineLexerEntry : public LexerEntry {
+        public:
+            MultilineLexerEntry(TokenType token, regex startMatcher, regex matcher);
+            virtual bool match(Lexer* lexer, string* match);
+        private:
+            regex startMatcher;
     };
 
     class Lexer {
         public:
             Lexer();
-            ~Lexer();
+            virtual ~Lexer();
             virtual void openFile(string fileName);
             virtual void closeFile();
-            virtual int getLocation();
+            virtual bool isOpen();
+            virtual bool isEOF();
+            virtual Location* getLocation();
             virtual TokenType getToken();
-            virtual void addToken(TokenType token, string regex);
+            virtual void addToken(TokenType token, regex match);
+            virtual void addToken(TokenType token, regex startMatch, regex match);
+            virtual void readLine();
+            virtual bool canReadLine();
+            virtual string getCurrentLine();
+            virtual void backupState();
+            virtual void restoreState();
         private:
+            virtual bool isEndOfLine();
+            virtual void trimWhitespace();
             list<LexerEntry*> *entries;
             int line;
             int offset;
-            bool open;
             ifstream* file;
+            string currentLine;
+            int oldLine;
+            int oldOffset;
+            streampos oldPos;
+            string oldCurrentLine;
     };
 }
 

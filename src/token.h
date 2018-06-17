@@ -7,12 +7,12 @@
 namespace curly_octo_meme {
     struct Token {
         public:
-            Token(TokenType type, Location location);
+            Token(TokenType type, Location* location);
             virtual TokenType getType();
-            virtual Location getLocation();
+            virtual Location* getLocation();
         private:
             TokenType token;
-            Location location;
+            Location* location;
     };
 }
 #endif

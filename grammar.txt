@@ -1,29 +1,29 @@
 Keywords:
 
-DO:do                   
-END:end                 
-WHILE:while             
-REPEAT:repeat           
-UNTIL:until             
-IF:if                   
-THEN:then               
-ELSEIF:elseif           
-ELSE:else               
-FOR:for                 
+DO:do                   /^(do)\b/
+END:end                 /^(end)\b/
+WHILE:while             /^(while)\b/
+REPEAT:repeat           /^(repeat)\b/
+UNTIL:until             /^(until)\b/
+IF:if                   /^(if)\b/
+THEN:then               /^(then)\b/
+ELSEIF:elseif           /^(elseif)\b/
+ELSE:else               /^(else)\b/
+FOR:for                 /^(for)\b/
 ASSIGN:=                /^=/
 COMMA:,                 /^,/
-IN:in                   
-FUNCTION:function       
-LOCAL:local             
-RETURN:return           
-BREAK:break             
+IN:in                   /^(in)\b/
+FUNCTION:function       /^(function)\b/
+LOCAL:local             /^(local)\b/
+RETURN:return           /^(return)\b/
+BREAK:break             /^(break)\b/
 DOT:.                   /^\./
 COLON::                 /^:/
 LBRACKET:[              /^\[/
 RBRACKET:]              /^\]/
-NIL:nil                 
-FALSE:false             
-TRUE:true               
+NIL:nil                 /^(nil)\b/
+FALSE:false             /^(false)\b/
+TRUE:true               /^(true)\b/
 VARARG:...              /^\.{3}/
 LPAREN:(                /^\(/
 RPAREN:)                /^\)/
@@ -43,10 +43,10 @@ GREATER:>               /^>/
 GREATEREQ:>=            /^>=/
 EQUALS:==               /^==/
 NEQUALS:~=              /^~=/
-AND:and                 
-OR:or                   
-NOT:not                 
-LENGTH:#                
+AND:and                 /^(and)\b/
+OR:or                   /^(or)\b/
+NOT:not                 /^(not)\b/
+LENGTH:#                /^#/
 
 IDENTIFIER:             /^(([a-z]|[A-Z]|_)+\w*)/
 NUMBER:                 /^((\d+(\.\d+))|(\d+\.?)|(\.\d+))((e|E)(\+?|-)\d+)?/

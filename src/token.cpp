@@ -2,8 +2,8 @@
 
 using namespace curly_octo_meme;
 
-Token::Token(TokenType token, Location location) 
-    :location(location) {
+Token::Token(TokenType token, Location* location) {
+    this->location = location;
     this->token = token;
 }
 
@@ -11,6 +11,6 @@ TokenType Token::getType() {
     return this->token;
 }
 
-Location Token::getLocation() {
+Location* Token::getLocation() {
     return this->location;
 }

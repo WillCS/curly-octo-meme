@@ -3,7 +3,10 @@
 
 namespace curly_octo_meme {
     namespace lua {
-        enum class LuaTokenType {
+        enum LuaTokenType {
+            STRING,
+            NUMBER,
+            IDENTIFIER,
             KW_DO,
             KW_END,
             KW_WHILE,
@@ -14,17 +17,17 @@ namespace curly_octo_meme {
             KW_ELSEIF,
             KW_ELSE,
             KW_FOR,
-            KW_ASSIGN,
-            KW_COMMA,
+            ASSIGN,
+            COMMA,
             KW_IN,
             KW_FUNCTION,
             KW_LOCAL,
             KW_RETURN,
             KW_BREAK,
-            KW_DOT,
-            KW_COLON,
-            KW_LBRACKET,
-            KW_RBRACKET,
+            DOT,
+            COLON,
+            LBRACKET,
+            RBRACKET,
             KW_NIL,
             KW_FALSE,
             KW_TRUE,
@@ -47,10 +50,12 @@ namespace curly_octo_meme {
             GREATEREQ,
             EQUALS,
             NEQUALS,
-            AND,
-            OR,
-            NOT,
-            LENGTH
+            KW_AND,
+            KW_OR,
+            KW_NOT,
+            LENGTH,
+            END_OF_FILE,
+            INVALID
         };
     }
 }
