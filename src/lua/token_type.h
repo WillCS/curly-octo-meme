@@ -7,6 +7,7 @@ namespace curly_octo_meme {
             STRING,
             NUMBER,
             IDENTIFIER,
+            COMMENT,
             KW_DO,
             KW_END,
             KW_WHILE,

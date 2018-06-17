@@ -80,17 +80,68 @@ Lexer* curly_octo_meme::constructLexer() {
     lexer->addToken(TokenType::PLUS, 
         std::regex("^\\+"));
         
-    lexer->addToken(TokenType::MINUS, 
-        std::regex("^-"));
+    lexer->addToken(TokenType::MODULUS, 
+        std::regex("^%%"));
         
-    lexer->addToken(TokenType::ASSIGN, 
-        std::regex("^="));
+    lexer->addToken(TokenType::MULTIPLY, 
+        std::regex("^\\*"));
+        
+    lexer->addToken(TokenType::DIVIDE, 
+        std::regex("^/"));
 
     lexer->addToken(TokenType::COMMA, 
         std::regex("^,"));
 
+    lexer->addToken(TokenType::VARARG, 
+        std::regex("^\\.{3}"));
+
+    lexer->addToken(TokenType::CONCAT, 
+        std::regex("^\\.{2}"));
+
     lexer->addToken(TokenType::DOT, 
         std::regex("^\\."));
+
+    lexer->addToken(TokenType::EXPONENT, 
+        std::regex("^\\^"));
+        
+    lexer->addToken(TokenType::SEMICOLON, 
+        std::regex("^;"));
+        
+    lexer->addToken(TokenType::COLON, 
+        std::regex("^:"));
+        
+    lexer->addToken(TokenType::LESSEQ, 
+        std::regex("^<="));
+        
+    lexer->addToken(TokenType::LESS, 
+        std::regex("^<"));
+        
+    lexer->addToken(TokenType::GREATEREQ, 
+        std::regex("^>="));
+        
+    lexer->addToken(TokenType::GREATER, 
+        std::regex("^>"));
+        
+    lexer->addToken(TokenType::EQUALS, 
+        std::regex("^=="));
+        
+    lexer->addToken(TokenType::NEQUALS, 
+        std::regex("^~="));
+        
+    lexer->addToken(TokenType::ASSIGN, 
+        std::regex("^="));
+        
+    lexer->addToken(TokenType::LENGTH, 
+        std::regex("^#"));
+
+    lexer->addToken(TokenType::COMMENT, std::regex("^--\\[(=*)\\["),
+        std::regex("^--\\[(=*)\\[(?:(?!(\\[\\1\\[)|(\\]\\1\\]))(.|\\n|\\r|\\f))*\\]\\1\\]"));
+        
+    lexer->addToken(TokenType::COMMENT,
+        std::regex("^--.*"));
+
+    lexer->addToken(TokenType::MINUS, 
+        std::regex("^-"));
         
     lexer->addToken(TokenType::STRING, std::regex("^\\[(=*)\\["),
         std::regex("^\\[(=*)\\[(?:(?!(\\[\\1\\[)|(\\]\\1\\]))(.|\\n|\\r|\\f))*\\]\\1\\]"));
@@ -102,7 +153,7 @@ Lexer* curly_octo_meme::constructLexer() {
         std::regex("^\\]"));
 
     lexer->addToken(TokenType::STRING, 
-        std::regex("^(\"|\')((\\\")|(\\\')|[^\"\'])*\\1"));
+        std::regex("^(\"|')(?:(?!\\1)((\\\\\\1)|.))*\\1"));
 
     lexer->addToken(TokenType::NUMBER, 
         std::regex("^((\\d+(\\.\\d+))|(\\d+\\.?)|(\\.\\d+))((e|E)(\\+?|-)\\d+)?\\b"));
