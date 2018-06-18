@@ -98,9 +98,6 @@ Lexer* curly_octo_meme::constructLexer() {
     lexer->addToken(TokenType::CONCAT, 
         std::regex("^\\.{2}"));
 
-    lexer->addToken(TokenType::DOT, 
-        std::regex("^\\."));
-
     lexer->addToken(TokenType::EXPONENT, 
         std::regex("^\\^"));
         
@@ -158,6 +155,9 @@ Lexer* curly_octo_meme::constructLexer() {
     lexer->addToken(TokenType::NUMBER, 
         std::regex("^((\\d+(\\.\\d+))|(\\d+\\.?)|(\\.\\d+))((e|E)(\\+?|-)\\d+)?\\b"));
 
+    lexer->addToken(TokenType::DOT, 
+        std::regex("^\\."));
+
     lexer->addToken(TokenType::IDENTIFIER, 
         std::regex("^(([a-z]|[A-Z]|_)\\w*)\\b"));
 
@@ -165,4 +165,58 @@ Lexer* curly_octo_meme::constructLexer() {
         std::regex("^[^\\s]\\w*"));
 
     return lexer;
+}
+
+Token* curly_octo_meme::getStringToken(std::string value, Location* loc) {
+    int snipSize = 1;
+    if(value[0] == '[') {
+        snipSize = value.find('[', 1) + 1;
+    }
+    value = value.substr(snipSize, value.length() - (2 * snipSize));
+    cout << value << '\n';
+    return new Token(STRING_TOKEN_TYPE, loc, value);
+}
+
+Token* curly_octo_meme::getIdentifierToken(std::string value, Location* loc) {
+    return new Token(IDENTIFIER_TOKEN_TYPE, loc, value);
+}
+
+/** Regular expression for matching the significand of a number in e
+ *  notation. */
+const std::regex significandMatcher = std::regex(".*(?=(E|e))");
+/** Regular expression for matching the exponent of a number in e notation. */
+const std::regex exponentMatcher = std::regex("(\\+|-)?\\d+$");
+
+/** Lua accepts some deformed ass numbers as valid so we fix them here
+ *  just to be safe before doing anything else with them.
+ *  Examples:   .7 -> 0.7
+ *              32. -> 32 */
+std::string fixFloat(std::string value) {
+    if(value[0] == '.') {
+        value = std::string("0").append(value);
+    } else if(value[value.length() - 1] == '.') {
+        value = value.substr(0, value.length() - 1);
+    }
+
+    return value;
+}
+
+Token* curly_octo_meme::getNumberToken(std::string value, Location* loc) {
+    float number;
+
+    if(value.find('e') == string::npos && value.find("E") == string::npos) {
+        number = std::stof(fixFloat(value));
+    } else {
+        std::smatch sigMatch;
+        std::regex_search(value, sigMatch, significandMatcher);
+        float significand = std::stof(fixFloat(sigMatch[0]));
+        
+        std::smatch expMatch;
+        std::regex_search(value, expMatch, exponentMatcher);
+        int exponent = std::stoi(expMatch[0]);
+
+        number = significand * std::pow(10, exponent);
+    }
+
+    return new Token(NUMBER_TOKEN_TYPE, loc, number);
 }

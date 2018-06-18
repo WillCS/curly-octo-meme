@@ -5,6 +5,8 @@ using namespace curly_octo_meme;
 const std::regex eolMatcher("^\\s*$");
 const std::regex wsMatcher("^\\s*");
 
+/* LexerEntry methods *****************/
+
 LexerEntry::LexerEntry(TokenType token, regex matcher) {
     this->token = token;
     this->matcher = matcher;
@@ -29,6 +31,8 @@ bool LexerEntry::match(Lexer* lexer, string* match) {
 
     return false;
 }
+
+/* MultilineLexerEntry methods *******/
 
 MultilineLexerEntry::MultilineLexerEntry(TokenType token, regex startMatcher, 
         regex matcher) : LexerEntry(token, matcher) {
@@ -62,6 +66,8 @@ bool MultilineLexerEntry::match(Lexer* lexer, string* match) {
 
     return false;
 }
+
+/* Lexer methods **********************/
 
 Lexer::Lexer() {
     this->file = new ifstream();
@@ -148,28 +154,44 @@ void Lexer::restoreState() {
     this->currentLine = this->oldCurrentLine;
 }
 
-TokenType Lexer::getToken() {
+Token* Lexer::getToken() {
     while(this->isEndOfLine()) {
         this->readLine();
         if(this->isEOF()) {
-            return TokenType::END_OF_FILE;
+            Location* loc = this->getLocation();
+            return new Token(TokenType::END_OF_FILE, loc);
         }
     }
 
     this->trimWhitespace();
+    Location* loc = this->getLocation();
 
     string matchedToken;
     for(auto const& entry : *(this->entries)) {
         if(entry->match(this, &matchedToken)) {
             this->currentLine = this->currentLine.substr(matchedToken.length());
             this->offset += matchedToken.length();
-            return entry->getToken();
+            TokenType type = entry->getToken();
+            switch(type) {
+                case IDENTIFIER_TOKEN_TYPE:
+                    return getIdentifierToken(matchedToken, loc);
+                    break;
+                case STRING_TOKEN_TYPE:
+                    return getStringToken(matchedToken, loc);
+                    break;
+                case NUMBER_TOKEN_TYPE:
+                    return getNumberToken(matchedToken, loc);
+                    break;
+                default:
+                    return new Token(type, loc);
+                    break;
+            }
             break;
         }
     }
     cout << "The bad thing is happening\n";
     // This should never happen
-    return TokenType::INVALID;
+    return new Token(TokenType::INVALID, loc);
 }
 
 void Lexer::addToken(TokenType token, regex match) {

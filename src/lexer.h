@@ -14,6 +14,7 @@ namespace curly_octo_meme {
 
 #include "language.h"
 #include "location.h"
+#include "token.h"
 
 using std::string;
 using std::list;
@@ -51,7 +52,7 @@ namespace curly_octo_meme {
             virtual bool isOpen();
             virtual bool isEOF();
             virtual Location* getLocation();
-            virtual TokenType getToken();
+            virtual Token* getToken();
             virtual void addToken(TokenType token, regex match);
             virtual void addToken(TokenType token, regex startMatch, regex match);
             virtual void readLine();
