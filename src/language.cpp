@@ -167,13 +167,31 @@ Lexer* curly_octo_meme::constructLexer() {
     return lexer;
 }
 
+/** Regular expression for matching leading whitespace in a multiline
+ *  string. */
+const std::regex whitespaceMatcher = std::regex("(\\r\\n|\\r|\\n)( |\\t)*");
+/** Regular expression for matching a newline at the start of a multiline
+ *  string. */
+const std::regex emptyFirstLineMatcher = std::regex("^(\\r\\n|\\r|\\n)");
+
+/** Multiline strings should not retain leading whitespace, so we get
+ *  rid of it here. */
+std::string fixString(std::string value) {
+    value = std::regex_replace(value, whitespaceMatcher, "\n");
+    return std::regex_replace(value, emptyFirstLineMatcher, "");
+}
+
 Token* curly_octo_meme::getStringToken(std::string value, Location* loc) {
     int snipSize = 1;
+    bool multiline = false;
     if(value[0] == '[') {
+        multiline = true;
         snipSize = value.find('[', 1) + 1;
     }
     value = value.substr(snipSize, value.length() - (2 * snipSize));
-    cout << value << '\n';
+    if(multiline) {
+        value = fixString(value);
+    }
     return new Token(STRING_TOKEN_TYPE, loc, value);
 }
 
