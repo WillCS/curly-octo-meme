@@ -29,7 +29,7 @@ namespace curly_octo_meme {
             LexerEntry(TokenType token, regex matcher);
             virtual TokenType getToken();
             virtual regex getRegex();
-            virtual bool match(Lexer* lexer, string* match);
+            virtual bool match(Lexer* lexer, string& match);
         private:
             TokenType token;
             regex matcher;
@@ -38,21 +38,20 @@ namespace curly_octo_meme {
     struct MultilineLexerEntry : public LexerEntry {
         public:
             MultilineLexerEntry(TokenType token, regex startMatcher, regex matcher);
-            virtual bool match(Lexer* lexer, string* match);
+            virtual bool match(Lexer* lexer, string& match);
         private:
             regex startMatcher;
     };
 
     class Lexer {
         public:
-            Lexer();
             virtual ~Lexer();
             virtual void openFile(string fileName);
             virtual void closeFile();
             virtual bool isOpen();
             virtual bool isEOF();
-            virtual Location* getLocation();
-            virtual Token* getToken();
+            virtual Location getLocation();
+            virtual Token getToken();
             virtual void addToken(TokenType token, regex match);
             virtual void addToken(TokenType token, regex startMatch, regex match);
             virtual void readLine();
@@ -63,10 +62,10 @@ namespace curly_octo_meme {
         private:
             virtual bool isEndOfLine();
             virtual void trimWhitespace();
-            list<LexerEntry*> *entries;
+            list<LexerEntry> entries;
             int line;
             int offset;
-            ifstream* file;
+            ifstream file;
             string currentLine;
             int oldLine;
             int oldOffset;

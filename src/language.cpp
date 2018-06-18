@@ -168,20 +168,26 @@ Lexer* curly_octo_meme::constructLexer() {
 }
 
 /** Regular expression for matching leading whitespace in a multiline
- *  string. */
+ *  string.
+ *  Raw expression: (\r\n|\r|\n)( |\t)*
+ */
 const std::regex whitespaceMatcher = std::regex("(\\r\\n|\\r|\\n)( |\\t)*");
+
 /** Regular expression for matching a newline at the start of a multiline
- *  string. */
+ *  string. 
+ *  Raw exprssion: ^(\r\n|\r|\n)
+ */
 const std::regex emptyFirstLineMatcher = std::regex("^(\\r\\n|\\r|\\n)");
 
 /** Multiline strings should not retain leading whitespace, so we get
- *  rid of it here. */
+ *  rid of it here. 
+ */
 std::string fixString(std::string value) {
     value = std::regex_replace(value, whitespaceMatcher, "\n");
     return std::regex_replace(value, emptyFirstLineMatcher, "");
 }
 
-Token* curly_octo_meme::getStringToken(std::string value, Location* loc) {
+Token curly_octo_meme::getStringToken(std::string value, Location loc) {
     int snipSize = 1;
     bool multiline = false;
     if(value[0] == '[') {
@@ -192,23 +198,30 @@ Token* curly_octo_meme::getStringToken(std::string value, Location* loc) {
     if(multiline) {
         value = fixString(value);
     }
-    return new Token(STRING_TOKEN_TYPE, loc, value);
+    
+    return Token(STRING_TOKEN_TYPE, loc, value);
 }
 
-Token* curly_octo_meme::getIdentifierToken(std::string value, Location* loc) {
-    return new Token(IDENTIFIER_TOKEN_TYPE, loc, value);
+Token curly_octo_meme::getIdentifierToken(std::string value, Location loc) {
+    return Token(IDENTIFIER_TOKEN_TYPE, loc, value);
 }
 
 /** Regular expression for matching the significand of a number in e
- *  notation. */
+ *  notation. 
+ *  Raw expression: .*(?=(E|e))
+ */
 const std::regex significandMatcher = std::regex(".*(?=(E|e))");
-/** Regular expression for matching the exponent of a number in e notation. */
+
+/** Regular expression for matching the exponent of a number in e notation. 
+ *  Raw expression: (\+|-)?\d+$
+ */
 const std::regex exponentMatcher = std::regex("(\\+|-)?\\d+$");
 
 /** Lua accepts some deformed ass numbers as valid so we fix them here
  *  just to be safe before doing anything else with them.
  *  Examples:   .7 -> 0.7
- *              32. -> 32 */
+ *              32. -> 32 
+ */
 std::string fixFloat(std::string value) {
     if(value[0] == '.') {
         value = std::string("0").append(value);
@@ -219,7 +232,7 @@ std::string fixFloat(std::string value) {
     return value;
 }
 
-Token* curly_octo_meme::getNumberToken(std::string value, Location* loc) {
+Token curly_octo_meme::getNumberToken(std::string value, Location loc) {
     float number;
 
     if(value.find('e') == string::npos && value.find("E") == string::npos) {
@@ -236,5 +249,5 @@ Token* curly_octo_meme::getNumberToken(std::string value, Location* loc) {
         number = significand * std::pow(10, exponent);
     }
 
-    return new Token(NUMBER_TOKEN_TYPE, loc, number);
+    return Token(NUMBER_TOKEN_TYPE, loc, number);
 }

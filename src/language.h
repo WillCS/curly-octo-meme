@@ -19,9 +19,9 @@ namespace curly_octo_meme {
 
 namespace curly_octo_meme {
     Lexer* constructLexer();
-    Token* getStringToken(std::string value, Location* loc);
-    Token* getIdentifierToken(std::string value, Location* loc);
-    Token* getNumberToken(std::string value, Location* loc);
+    Token getStringToken(std::string value, Location loc);
+    Token getIdentifierToken(std::string value, Location loc);
+    Token getNumberToken(std::string value, Location loc);
 }
 
 #endif

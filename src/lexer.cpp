@@ -20,12 +20,12 @@ regex LexerEntry::getRegex() {
     return this->matcher;
 }
 
-bool LexerEntry::match(Lexer* lexer, string* match) {
+bool LexerEntry::match(Lexer* lexer, string& match) {
     std::smatch found;
     string search = lexer->getCurrentLine();
     std::regex_search(search, found, this->getRegex());
     if(!found.empty()) {
-        *match = found[0];
+        match = found[0];
         return true;
     }
 
@@ -39,7 +39,7 @@ MultilineLexerEntry::MultilineLexerEntry(TokenType token, regex startMatcher,
     this->startMatcher = startMatcher;
 }
 
-bool MultilineLexerEntry::match(Lexer* lexer, string* match) {
+bool MultilineLexerEntry::match(Lexer* lexer, string& match) {
     std::smatch foundStart;
     string startSearch = lexer->getCurrentLine();
     std::regex_search(startSearch, foundStart, this->startMatcher);
@@ -52,7 +52,7 @@ bool MultilineLexerEntry::match(Lexer* lexer, string* match) {
             std::regex_search(search, found, this->getRegex());
 
             if(!found.empty()) {
-                *match = found[0];
+                match = found[0];
                 return true;
             } else if(lexer->canReadLine()) {
                 lexer->readLine();
@@ -69,31 +69,27 @@ bool MultilineLexerEntry::match(Lexer* lexer, string* match) {
 
 /* Lexer methods **********************/
 
-Lexer::Lexer() {
-    this->file = new ifstream();
-    this->entries = new list<LexerEntry*>();
-}
-
 Lexer::~Lexer() {
-    delete this->entries;
-    delete this->file;
+    if(this->isOpen()) {
+        this->closeFile();
+    }
 }
 
 void Lexer::openFile(string fileName) {
-    if(this->file->is_open()) {
+    if(this->file.is_open()) {
         this->closeFile();
     }
 
-    this->file->open(fileName);
+    this->file.open(fileName);
     this->readLine();
 }
 
 void Lexer::closeFile() {
-    this->file->close();
+    this->file.close();
 }
 
 bool Lexer::isOpen() {
-    return this->file->is_open();
+    return this->file.is_open();
 }
 
 bool Lexer::isEndOfLine() {
@@ -103,11 +99,11 @@ bool Lexer::isEndOfLine() {
 }
 
 bool Lexer::isEOF() {
-    return this->file->eof() && this->isEndOfLine();
+    return this->file.eof() && this->isEndOfLine();
 }
 
 bool Lexer::canReadLine() {
-    return !this->file->eof();
+    return !this->file.eof();
 }
 
 void Lexer::trimWhitespace() {
@@ -122,7 +118,7 @@ void Lexer::trimWhitespace() {
 void Lexer::readLine() {
     if(this->isOpen()) {
         string newLine;
-        std::getline(*(this->file), newLine);
+        std::getline(this->file, newLine);
         this->currentLine.append(newLine);
         this->currentLine.append("\n");
         this->line++;
@@ -130,9 +126,9 @@ void Lexer::readLine() {
     }
 }
 
-Location* Lexer::getLocation() {
-    // We deallocate these Locations in the parser
-    return new Location(this->line, this->offset);
+Location Lexer::getLocation() {
+    Location loc(this->line, this->offset);
+    return loc;
 }
 
 string Lexer::getCurrentLine() {
@@ -142,36 +138,36 @@ string Lexer::getCurrentLine() {
 void Lexer::backupState() {
     this->oldLine = this->line;
     this->oldOffset = this->offset;
-    this->oldPos = this->file->tellg();
+    this->oldPos = this->file.tellg();
     this->oldCurrentLine = this->currentLine;
 }
 
 void Lexer::restoreState() {
     this->line = this->oldLine;
     this->offset = this->oldOffset;
-    this->file->clear();
-    this->file->seekg(this->oldPos);
+    this->file.clear();
+    this->file.seekg(this->oldPos);
     this->currentLine = this->oldCurrentLine;
 }
 
-Token* Lexer::getToken() {
+Token Lexer::getToken() {
     while(this->isEndOfLine()) {
         this->readLine();
         if(this->isEOF()) {
-            Location* loc = this->getLocation();
-            return new Token(TokenType::END_OF_FILE, loc);
+            Location loc = this->getLocation();
+            return Token(TokenType::END_OF_FILE, loc);
         }
     }
 
     this->trimWhitespace();
-    Location* loc = this->getLocation();
+    Location loc = this->getLocation();
 
     string matchedToken;
-    for(auto const& entry : *(this->entries)) {
-        if(entry->match(this, &matchedToken)) {
+    for(auto& entry : this->entries) {
+        if(entry.match(this, matchedToken)) {
             this->currentLine = this->currentLine.substr(matchedToken.length());
             this->offset += matchedToken.length();
-            TokenType type = entry->getToken();
+            TokenType type = entry.getToken();
             switch(type) {
                 case IDENTIFIER_TOKEN_TYPE:
                     return getIdentifierToken(matchedToken, loc);
@@ -183,7 +179,7 @@ Token* Lexer::getToken() {
                     return getNumberToken(matchedToken, loc);
                     break;
                 default:
-                    return new Token(type, loc);
+                    return Token(type, loc);
                     break;
             }
             break;
@@ -191,15 +187,13 @@ Token* Lexer::getToken() {
     }
     cout << "The bad thing is happening\n";
     // This should never happen
-    return new Token(TokenType::INVALID, loc);
+    return Token(TokenType::INVALID, loc);
 }
 
 void Lexer::addToken(TokenType token, regex match) {
-    LexerEntry* entry = new LexerEntry(token, match);
-    this->entries->push_back(entry);
+    this->entries.push_back(LexerEntry(token, match));
 }
 
 void Lexer::addToken(TokenType token, regex startMatch, regex match) {
-    MultilineLexerEntry* entry = new MultilineLexerEntry(token, startMatch, match);
-    this->entries->push_back(entry);
+    this->entries.push_back(MultilineLexerEntry(token, startMatch, match));
 }

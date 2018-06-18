@@ -2,17 +2,17 @@
 
 using namespace curly_octo_meme;
 
-Token::Token(TokenType token, Location* location) {
-    this->location = location;
+Token::Token(TokenType token, Location location)
+        :location(location) {
     this->token = token;
 }
 
-Token::Token(TokenType token, Location* location, string value) 
+Token::Token(TokenType token, Location location, string value) 
         :Token(token, location) {
     this->stringValue = value;
 }
 
-Token::Token(TokenType token, Location* location, float value) 
+Token::Token(TokenType token, Location location, float value) 
         :Token(token, location) {
     this->numValue = value;
 }
@@ -29,6 +29,6 @@ TokenType Token::getType() {
     return this->token;
 }
 
-Location* Token::getLocation() {
+Location Token::getLocation() {
     return this->location;
 }

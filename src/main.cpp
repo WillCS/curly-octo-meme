@@ -8,7 +8,7 @@ int main(int argc, char** argv) {
 
     lexer->openFile(argv[1]);
     while(!lexer->isEOF()) {
-        cout << lexer->getToken()->getType() << '\n';
+        cout << lexer->getToken().getType() << '\n';
     }
 
     delete lexer;
