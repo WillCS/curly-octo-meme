@@ -8,7 +8,8 @@
 #include "lua/token_type.h"
 
 namespace curly_octo_meme {
-    typedef lua::LuaTokenType TokenType;
+    typedef lua::LuaTerminal TokenType;
+    typedef lua::LuaNonTerminal NonTerminal;
     const TokenType STRING_TOKEN_TYPE = TokenType::STRING;
     const TokenType NUMBER_TOKEN_TYPE = TokenType::NUMBER;
     const TokenType IDENTIFIER_TOKEN_TYPE = TokenType::IDENTIFIER;

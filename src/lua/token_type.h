@@ -3,7 +3,7 @@
 
 namespace curly_octo_meme {
     namespace lua {
-        enum LuaTokenType {
+        enum LuaTerminal {
             STRING,
             NUMBER,
             IDENTIFIER,
@@ -57,6 +57,54 @@ namespace curly_octo_meme {
             LENGTH,
             END_OF_FILE,
             INVALID
+        };
+
+        enum LuaNonTerminal {
+            CHUNK,
+            BLOCK,
+            STAT,
+            ASSIGN_STAT,
+            DO_STAT,
+            WHILE_STAT,
+            REPEAT_STAT,
+            IF_STAT,
+            ELSEIF_BLOCK,
+            ELSE_BLOCk,
+            FOR_STAT,
+            FOR_STEP_EXP,
+            FOREACH_STAT,
+            FUNC_STAT,
+            LOCAL_FUNC_STAT,
+            LOCAL_VAR_STAT,
+            LOCAL_VAR_ASSIGN,
+            STAT_LIST,
+            STAT_TAIL,
+            NULLABLE_SEMICOLON,
+            LAST_STAT,
+            FUNC_IDENTIFIER,
+            FIELD_ACCESSOR,
+            METHOD_ACCESSOR,
+            VAR_LIST,
+            VAR,
+            IDENTIFIER_LIST,
+            EXP_LIST,
+            NULLABLE_EXP_LIST,
+            EXP,
+            PREFIX_EXP,
+            ARGS,
+            FUNCTION,
+            FUNC_BODY,
+            PARAM_LIST,
+            VARARG_PARAM,
+            TABLE_CONSTRUCTOR,
+            FIELD_LIST,
+            FIELD_ENTRIES,
+            NULLABLE_FIELD_LIST,
+            FIELD,
+            FIELD_SEP,
+            NULLABLE_FIELD_SEP,
+            BIN_OP,
+            UN_OP
         };
     }
 }

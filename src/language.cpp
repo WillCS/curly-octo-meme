@@ -198,11 +198,14 @@ Token curly_octo_meme::getStringToken(std::string value, Location loc) {
     if(multiline) {
         value = fixString(value);
     }
+
+    std::cout << "String(" << value << ")\n";
     
     return Token(STRING_TOKEN_TYPE, loc, value);
 }
 
 Token curly_octo_meme::getIdentifierToken(std::string value, Location loc) {
+    cout << "identifier(" << value << ")\n";
     return Token(IDENTIFIER_TOKEN_TYPE, loc, value);
 }
 
@@ -248,6 +251,8 @@ Token curly_octo_meme::getNumberToken(std::string value, Location loc) {
 
         number = significand * std::pow(10, exponent);
     }
+
+    std::cout << "number(" << number << ")\n";
 
     return Token(NUMBER_TOKEN_TYPE, loc, number);
 }
